@@ -1,0 +1,12 @@
+data/
+.runtime/
+.venv/
+__pycache__/
+*.py[cod]
+*.dpapi
+*.pdf
+*.zip
+*.log
+.env*
+!dictionary/sources/en-ko-v1.3.0.zip
+PaperLink_Releases/

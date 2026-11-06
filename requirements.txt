@@ -1,0 +1,5 @@
+# Reader-only runtime; no PDF2zh or global Python packages are required.
+PyMuPDF==1.28.0
+cryptography==49.0.0
+cffi==2.1.0
+pycparser==3.0

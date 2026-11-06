@@ -1,0 +1,194 @@
+{
+  "paper": "1_Highly robust nanostructured carbon films.pdf",
+  "pages": 11,
+  "method": "All pages including captions and bibliography; PDF word extraction with line-break hyphen joining; lowercase English words/hyphenated compounds of at least 3 characters; same lookup normalization for both; primary metric is occurrence-weighted hit rate; no Quick or technical supplement; coverage is not semantic accuracy.",
+  "results": [
+    {
+      "source": "Wiktionary / koreader-dicts",
+      "headwords": 25974,
+      "exact_unique_hits": 458,
+      "unique_hits": 788,
+      "unique_total": 1240,
+      "unique_hit_rate": 63.55,
+      "token_hits": 3890,
+      "token_total": 5145,
+      "token_hit_rate": 75.61,
+      "missing_common": [
+        {
+          "term": "mechanical",
+          "count": 82
+        },
+        {
+          "term": "ionomer",
+          "count": 40
+        },
+        {
+          "term": "tensile",
+          "count": 32
+        },
+        {
+          "term": "esi",
+          "count": 23
+        },
+        {
+          "term": "eap",
+          "count": 21
+        },
+        {
+          "term": "cyclic",
+          "count": 19
+        },
+        {
+          "term": "free-standing",
+          "count": 19
+        },
+        {
+          "term": "thermal",
+          "count": 18
+        },
+        {
+          "term": "advanced",
+          "count": 18
+        },
+        {
+          "term": "mater",
+          "count": 17
+        },
+        {
+          "term": "pem",
+          "count": 15
+        },
+        {
+          "term": "elongation",
+          "count": 13
+        },
+        {
+          "term": "degradation",
+          "count": 13
+        },
+        {
+          "term": "robust",
+          "count": 12
+        },
+        {
+          "term": "demonstrated",
+          "count": 12
+        },
+        {
+          "term": "modulus",
+          "count": 12
+        },
+        {
+          "term": "kaist",
+          "count": 12
+        },
+        {
+          "term": "liu",
+          "count": 12
+        },
+        {
+          "term": "actuators",
+          "count": 11
+        },
+        {
+          "term": "agglomerates",
+          "count": 11
+        }
+      ]
+    },
+    {
+      "source": "Open English-Korean Dictionary",
+      "headwords": 48035,
+      "exact_unique_hits": 915,
+      "unique_hits": 987,
+      "unique_total": 1240,
+      "unique_hit_rate": 79.6,
+      "token_hits": 4483,
+      "token_total": 5145,
+      "token_hit_rate": 87.13,
+      "missing_common": [
+        {
+          "term": "ionomer",
+          "count": 40
+        },
+        {
+          "term": "esi",
+          "count": 23
+        },
+        {
+          "term": "kim",
+          "count": 22
+        },
+        {
+          "term": "eap",
+          "count": 21
+        },
+        {
+          "term": "robustness",
+          "count": 18
+        },
+        {
+          "term": "mater",
+          "count": 17
+        },
+        {
+          "term": "chem",
+          "count": 16
+        },
+        {
+          "term": "pem",
+          "count": 15
+        },
+        {
+          "term": "modulus",
+          "count": 12
+        },
+        {
+          "term": "kaist",
+          "count": 12
+        },
+        {
+          "term": "liu",
+          "count": 12
+        },
+        {
+          "term": "delamination",
+          "count": 11
+        },
+        {
+          "term": "hygrothermal",
+          "count": 10
+        },
+        {
+          "term": "reconfiguration",
+          "count": 9
+        },
+        {
+          "term": "zhang",
+          "count": 9
+        },
+        {
+          "term": "nanostructured",
+          "count": 8
+        },
+        {
+          "term": "crystallinity",
+          "count": 8
+        },
+        {
+          "term": "bilayer",
+          "count": 8
+        },
+        {
+          "term": "actuating",
+          "count": 8
+        },
+        {
+          "term": "mpa",
+          "count": 7
+        }
+      ]
+    }
+  ],
+  "preferred_source": "Open English-Korean Dictionary"
+}
