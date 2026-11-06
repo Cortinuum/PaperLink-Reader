@@ -324,7 +324,7 @@ class Handler(BaseHTTPRequestHandler):
                          for table in ('links','sentence_links','notes','chats')}
                 out['paper']=CATALOG[pid]
                 return self.send(out)
-            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.0',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
+            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.1',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
             return self.send({'error':'찾을 수 없습니다.'},404)
         except (KeyError,ValueError,RuntimeError,OSError) as exc: self.send({'error':str(exc)},400)
 

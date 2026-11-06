@@ -1,6 +1,6 @@
 param([ValidateRange(1024,65515)][int]$Port=8765,[switch]$NoBrowser)
 $ErrorActionPreference='Stop'
-$version='0.8.0'
+$version='0.8.1'
 $runtime=Join-Path $PSScriptRoot '.runtime\python\cpython-3.13.16-windows-x86_64-none'
 $python=Join-Path $runtime 'pythonw.exe'
 if (-not (Test-Path -LiteralPath $python)) { throw 'Run Setup_PaperLink.cmd first, or extract the complete PaperLink ZIP.' }

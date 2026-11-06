@@ -16,6 +16,7 @@ Python과 패키지를 포함하여 별도 설치·최초 다운로드가 필요
 ## 기능
 
 - 원문·번역 PDF 나란히 보기, 기본 75% 배율, 페이지 이동 단축키
+- 작은 도구줄에 보기·선택 버튼과 언어 표시 통합, PDF 공간 확대
 - 문장 선택과 GPT 옆 패널, 분야를 가정하지 않는 질문과 추가 검토 선택
 - 오프라인 영한사전, 대표 결과 한 개와 접을 수 있는 추가 결과, 개인 단어장
 - 논문쌍 추가·PDF 변경·제거·휴지통 복원
@@ -47,3 +48,5 @@ node --test test_markdown.cjs test_question_prompt.cjs
 ## 라이선스
 
 앱 코드: GNU AGPL v3.0. 사전과 외부 라이브러리에는 각각의 별도 라이선스가 적용됩니다. [THIRD_PARTY.md](THIRD_PARTY.md), [dictionary/NOTICE.md](dictionary/NOTICE.md)를 확인하세요.
+
+PDF2zh 사용·배포 구분과 이번 릴리스 점검은 [DISTRIBUTION_REVIEW.md](DISTRIBUTION_REVIEW.md)에 기록했습니다.

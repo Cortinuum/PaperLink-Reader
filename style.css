@@ -132,3 +132,19 @@ main,body.chat-closed main{grid-template-columns:minmax(0,1fr) var(--chat-width)
 #wordFormStatus:empty{display:none}.word-popup .word-label{margin-top:10px}.word-source-label{margin-bottom:9px}#saveWord{margin-top:10px}
 
 .dictionary-alternatives{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.dictionary-alternatives>summary{font-size:11px;color:var(--muted)}.dictionary-alternatives>.dictionary-entry{margin-top:9px;padding-top:8px;border-top:1px solid var(--line)}
+
+/* One compact reader toolbar; all remaining height belongs to the PDF. */
+.toolbar{padding:5px 10px;gap:5px 10px;min-height:38px;flex:0 0 auto;flex-wrap:wrap}
+.toolbar .paper-heading{flex:1 1 110px;min-width:0;max-width:300px}
+.toolbar b{font-size:11px;line-height:1.3;max-width:100%}
+.reader-languages{display:flex;gap:10px;margin-top:3px;font-size:9px;line-height:1.2;color:var(--muted);white-space:nowrap}
+.reader-languages i{font-style:normal;font-size:9px;margin-left:3px}
+.paging{gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.paging button,.paging .view-switch button,#wordSelect,#toggleBoxes{padding:4px 6px;font-size:10px;line-height:1.3;min-height:25px}
+.paging input{width:33px;padding:3px 1px;font-size:11px;min-height:25px}
+.paging select{max-width:75px;padding:3px 4px;font-size:10px;min-height:25px}
+.paging #total{font-size:10px}.paging .view-switch{margin-right:2px}
+#toggleBoxes[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+#viewport{padding:10px 12px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:620px){.toolbar{padding:4px 7px;gap:4px}.toolbar .paper-heading{max-width:none;flex-basis:100%}.paging{justify-content:flex-start}.reader-languages{margin-top:2px}#viewport{padding:7px}}

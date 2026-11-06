@@ -17,3 +17,5 @@ Application source is prepared for GNU AGPL v3.0 distribution. Third-party compo
 The release ZIP includes the app's Python/JavaScript source and the component notice files in its runtime/package directories. The complete app source and build/setup scripts are available at the matching GitHub release tag. Upstream component source archives are available through the version-pinned links above; use the versions in requirements.txt and runtime notices to reproduce the distribution.
 
 The private Quick supplement, personal PDFs, reading records, vocabulary and account credentials are not published. PDFs used by users are not covered by this repository's application licence. No claim of third-party affiliation or endorsement is made.
+
+PDF2zh / PDFMathTranslate-next is not bundled or invoked. See [DISTRIBUTION_REVIEW.md](DISTRIBUTION_REVIEW.md) for the software-versus-paper distribution distinction and the checked licence references.
