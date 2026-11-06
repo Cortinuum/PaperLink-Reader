@@ -112,12 +112,42 @@ def extract(path,page,side,parents):
                     bbox=[min(r[0] for r in boxes),min(r[1] for r in boxes),max(r[2] for r in boxes),max(r[3] for r in boxes)]))
         w=doc[page-1].rect.width
         h=doc[page-1].rect.height
-        def order(s):
-            b=s['flow_bbox']
-            band=3 if b[1]>h*.9 else 0 if b[1]<h*(.45 if page==1 else .04) else 1 if (b[0]+b[2])/2<w/2 else 2
-            return band,b[1],b[0],s['offset']
-        result.sort(key=order)
-        return result
+        return reading_order(result,w,h)
+
+
+def reading_order(items,width,height):
+    """Read columns between full-width text bands, including figure captions.
+
+    Use the containing text flow rather than individual sentence width: a short
+    caption sentence still belongs to the same spanning caption as its neighbours.
+    IDs/character anchors are unchanged so saved links and notes remain valid.
+    """
+    for s in items:
+        b=s['flow_bbox']
+        s['layout_role']=('margin' if b[2]<width*.05 or b[0]>width*.96 else
+                          'header' if b[1]<height*.045 else
+                          'footer' if b[1]>height*.94 else 'content')
+    bands=[]
+    boxes=sorted({tuple(s['flow_bbox']) for s in items
+                  if s['flow_bbox'][2]-s['flow_bbox'][0]>width*.68
+                  and s['flow_bbox'][0]<width*.4 and s['flow_bbox'][2]>width*.6})
+    for box in sorted(boxes,key=lambda b:b[1]):
+        if bands and box[1]<=bands[-1][1]+2:
+            bands[-1][1]=max(bands[-1][1],box[3])
+        else:bands.append([box[1],box[3]])
+    def order(s):
+        b=s['flow_bbox'];x=(b[0]+b[2])/2
+        # Sideways publishing notices and page furniture must not interrupt prose.
+        if b[2]<width*.05 or b[0]>width*.96:return (-1,b[1],b[0],s['offset'])
+        if b[1]<height*.045:return (-2,b[1],b[0],s['offset'])
+        if b[1]>height*.94:return (2*len(bands)+2,b[0],b[1],s['offset'])
+        spanning=b[2]-b[0]>width*.68 and b[0]<width*.4 and b[2]>width*.6
+        if spanning:
+            index=next(i for i,(top,bottom) in enumerate(bands) if top-2<=b[1]<=bottom)
+            return (2*index+1,0,b[1],s['offset'])
+        segment=sum(bottom<=b[1]+2 for top,bottom in bands)
+        return (2*segment,0 if x<width/2 else 1,b[1],s['offset'])
+    return sorted(items,key=order)
 
 def monotonic(source,target):
     """Ordered 1:1 / 1:many candidates using lengths and numeric anchors, not semantics."""
@@ -152,5 +182,15 @@ def monotonic(source,target):
 def align(en,ko,paragraph_links):
     # PDF text blocks may accidentally combine a right-column paragraph and a left
     # footnote. Align the reconstructed page reading order, not those merged boxes.
-    mapped=monotonic(en,ko)
+    # Running headers/footers and rotated margin notices can be emitted in a
+    # different order by the two PDFs. Do not let them shift the body alignment.
+    mapped=monotonic([s for s in en if s.get('layout_role','content')=='content'],
+                     [s for s in ko if s.get('layout_role','content')=='content'])
+    for role in ('header','footer','margin'):
+        available=[s for s in ko if s.get('layout_role')==role]
+        for s in (s for s in en if s.get('layout_role')==role):
+            if not available:mapped[s['id']]=[];continue
+            a=s['bbox']
+            target=min(available,key=lambda t:sum(abs(a[i]+a[i+2]-t['bbox'][i]-t['bbox'][i+2]) for i in (0,1)))
+            mapped[s['id']]=[target['id']];available.remove(target)
     return [dict(source=s['id'],targets=mapped.get(s['id'],[]),method='sentence-order',review=True) for s in en]

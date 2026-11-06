@@ -142,8 +142,29 @@ def page_data(pid, page):
         changes={r['source']:json.loads(r['targets']) for r in db.execute(
             'SELECT source,targets FROM sentence_links WHERE paper=? AND page=?',(pid,page))}
     for link in data['sentence_links']:
+        link['automatic_targets']=link['targets'][:]
         if link['source'] in changes:link.update(targets=changes[link['source']],method='manual',review=False)
     return data
+
+def write_sentence_links(pid,page,updates):
+    pd=page_data(pid,page)
+    sources={s['id'] for s in pd['sentences_en']};targets={s['id'] for s in pd['sentences_ko']}
+    if not isinstance(updates,list) or not updates or len(updates)>len(sources):
+        raise ValueError('수정할 문장 연결을 확인하세요.')
+    seen=set()
+    for item in updates:
+        if not isinstance(item,dict) or item.get('source') not in sources or item['source'] in seen:
+            raise ValueError('원문 문장을 확인하세요.')
+        seen.add(item['source'])
+        chosen=item.get('targets')
+        if not isinstance(chosen,list) or not all(isinstance(t,str) and t in targets for t in chosen) or len(chosen)!=len(set(chosen)):
+            raise ValueError('번역 문장을 확인하세요.')
+        if 'reset' in item and not isinstance(item['reset'],bool):raise ValueError('자동 연결 복원을 확인하세요.')
+    # Validate the entire page edit before committing any changed row.
+    with database() as db:
+        for item in updates:
+            if item.get('reset'):db.execute('DELETE FROM sentence_links WHERE paper=? AND page=? AND source=?',(pid,page,item['source']))
+            else:db.execute('INSERT OR REPLACE INTO sentence_links VALUES(?,?,?,?)',(pid,page,item['source'],json.dumps(item['targets'])))
 
 def word_source(payload):
     pid=payload['paper'];page=int(payload['page']);side=payload.get('side','en')
@@ -262,7 +283,7 @@ class Handler(BaseHTTPRequestHandler):
             if u.path=='/':
                 raw=(ROOT/'index.html').read_text(encoding='utf-8').replace('__TOKEN__',TOKEN).encode()
                 return self.send(raw,ctype='text/html; charset=utf-8')
-            if u.path in ('/app.js','/style.css','/theme.js','/words.js','/markdown.js','/question_prompt.js','/import.js','/vendor/markdown-it.min.js'):
+            if u.path in ('/app.js','/style.css','/theme.js','/words.js','/markdown.js','/question_prompt.js','/import.js','/link_editor.js','/vendor/markdown-it.min.js'):
                 return self.send((ROOT/u.path[1:]).read_bytes(),ctype='text/javascript; charset=utf-8' if u.path.endswith('.js') else 'text/css; charset=utf-8')
             if u.path=='/api/library':
                 return self.send(dict(papers=discover(),removed=LIBRARY.listing(deleted=True),account=AUTH.status(),review_catalog=review_options.catalog()))
@@ -324,7 +345,7 @@ class Handler(BaseHTTPRequestHandler):
                          for table in ('links','sentence_links','notes','chats')}
                 out['paper']=CATALOG[pid]
                 return self.send(out)
-            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.1',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
+            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.2',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
             return self.send({'error':'찾을 수 없습니다.'},404)
         except (KeyError,ValueError,RuntimeError,OSError) as exc: self.send({'error':str(exc)},400)
 
@@ -373,13 +394,8 @@ class Handler(BaseHTTPRequestHandler):
             if route=='/api/vocabulary/restore':return self.send(dict(entry=VOCAB.restore(data['id'])))
             if route=='/api/context': return self.send(make_context(data))
             if route=='/api/sentence-link':
-                pid=data['paper'];page=int(data['page']);pd=page_data(pid,page)
-                if data['source'] not in {s['id'] for s in pd['sentences_en']}:raise ValueError('원문 문장이 없습니다.')
-                if not isinstance(data['targets'],list) or not set(data['targets'])<={s['id'] for s in pd['sentences_ko']}:
-                    raise ValueError('번역 문장을 확인하세요.')
-                with database() as db:
-                    if data.get('reset'):db.execute('DELETE FROM sentence_links WHERE paper=? AND page=? AND source=?',(pid,page,data['source']))
-                    else:db.execute('INSERT OR REPLACE INTO sentence_links VALUES(?,?,?,?)',(pid,page,data['source'],json.dumps(data['targets'])))
+                pid=data['paper'];page=int(data['page'])
+                write_sentence_links(pid,page,data.get('updates',[data]))
                 return self.send(dict(ok=True))
             if route=='/api/link':
                 page=int(data['page']); pid=data['paper']; pd=page_data(pid,page)
