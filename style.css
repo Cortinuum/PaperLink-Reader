@@ -172,3 +172,13 @@ main,body.chat-closed main{grid-template-columns:minmax(0,1fr) var(--chat-width)
 :root[data-theme="dark"] #linkEditor{--bg:#101820;--panel:#17222b;background:var(--panel);color:var(--ink)}
 
 #linkEditor .link-preview p{color:var(--ink)}
+/* Review markers describe rule agreement, not a translation accuracy score. */
+.alignment-review-button,.connection-warning{color:#93601b;border-color:#d9ac66;background:#fff5df}
+.connection-warning{font-size:11px;text-align:left;line-height:1.6;width:100%;margin:0 0 12px;padding:8px 10px}
+.show-boxes .region.alignment-suspect{outline:1px dashed #d59b40;background:#e8af4210}
+.link-rule-details{flex-shrink:0;padding:0 20px 10px;font-size:10px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.link-rule-details span{flex:1;min-width:180px}.link-rule-details button{font-size:10px;padding:4px 7px;margin-left:5px}.link-rule-details #linkCandidates:empty{display:none}
+.link-list-headings> b:first-child{display:flex;align-items:center;gap:6px}.link-list-headings> b:first-child small{margin-left:0}#filterReviewLinks{margin-left:auto;font-size:10px;padding:3px 6px}#filterReviewLinks[aria-pressed="true"]{border-color:#d59b40;color:#93601b;background:#fff5df}
+.link-choice.suspect .link-choice-status{color:#a66b1b}.link-choice[hidden]{display:none}
+:root[data-theme="dark"] .alignment-review-button,:root[data-theme="dark"] .connection-warning,:root[data-theme="dark"] #filterReviewLinks[aria-pressed="true"]{background:#3c3020;color:#f0cc8c;border-color:#84683b}
+:root[data-theme="dark"] .link-choice.suspect .link-choice-status{color:#edbf75}
+@media(max-width:700px){.link-rule-details{padding:0 12px 7px}.link-rule-details button{margin:4px 4px 0 0}.link-list-headings> b:first-child small{display:none}}

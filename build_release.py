@@ -2,9 +2,9 @@
 from pathlib import Path
 import hashlib,json,sqlite3,tempfile,zipfile
 ROOT=Path(__file__).resolve().parent
-VERSION='0.8.2'
-APP_FILES=['reader.py','sentences.py','vocabulary.py','local_dictionary.py','paper_library.py','pdf_import.py','review_options.py','chatgpt_account.py','index.html','app.js','words.js','import.js','link_editor.js','style.css','theme.js','markdown.js','question_prompt.js','Start_PaperLink.cmd','Start_PaperLink.ps1','Stop_PaperLink.cmd','Stop_PaperLink.ps1','requirements.txt','README.md','LICENSE','THIRD_PARTY.md','DISTRIBUTION_REVIEW.md']
-README='''PaperLink 0.8.2 — Windows x64 로컬 브라우저 실행판
+VERSION='0.8.3'
+APP_FILES=['reader.py','sentences.py','local_alignment.py','vocabulary.py','local_dictionary.py','paper_library.py','pdf_import.py','review_options.py','chatgpt_account.py','index.html','app.js','words.js','import.js','link_editor.js','style.css','theme.js','markdown.js','question_prompt.js','Start_PaperLink.cmd','Start_PaperLink.ps1','Stop_PaperLink.cmd','Stop_PaperLink.ps1','requirements.txt','README.md','LICENSE','THIRD_PARTY.md','DISTRIBUTION_REVIEW.md']
+README='''PaperLink 0.8.3 — Windows x64 로컬 브라우저 실행판
 
 1. ZIP 전체를 쓰기 가능한 폴더에 압축 해제하세요.
 2. Start_PaperLink.cmd를 두 번 클릭하세요. 기본 브라우저에서 열립니다.

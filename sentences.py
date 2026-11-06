@@ -108,7 +108,7 @@ def extract(path,page,side,parents):
                 if not boxes:continue
                 ident=side+'s'+hashlib.sha256((str(page)+str(boxes)+snippet).encode()).hexdigest()[:12]
                 result.append(dict(id=ident,text=snippet,rects=boxes,parents=pids,flow_parents=list(dict.fromkeys(group['parents'])),
-                    flow_bbox=flow_box,offset=a,
+                    flow_bbox=flow_box,offset=a,font_size=group['last']['size'],
                     bbox=[min(r[0] for r in boxes),min(r[1] for r in boxes),max(r[2] for r in boxes),max(r[3] for r in boxes)]))
         w=doc[page-1].rect.width
         h=doc[page-1].rect.height
@@ -179,18 +179,6 @@ def monotonic(source,target):
         cursor=prev
     return dict(mapped)
 
-def align(en,ko,paragraph_links):
-    # PDF text blocks may accidentally combine a right-column paragraph and a left
-    # footnote. Align the reconstructed page reading order, not those merged boxes.
-    # Running headers/footers and rotated margin notices can be emitted in a
-    # different order by the two PDFs. Do not let them shift the body alignment.
-    mapped=monotonic([s for s in en if s.get('layout_role','content')=='content'],
-                     [s for s in ko if s.get('layout_role','content')=='content'])
-    for role in ('header','footer','margin'):
-        available=[s for s in ko if s.get('layout_role')==role]
-        for s in (s for s in en if s.get('layout_role')==role):
-            if not available:mapped[s['id']]=[];continue
-            a=s['bbox']
-            target=min(available,key=lambda t:sum(abs(a[i]+a[i+2]-t['bbox'][i]-t['bbox'][i+2]) for i in (0,1)))
-            mapped[s['id']]=[target['id']];available.remove(target)
-    return [dict(source=s['id'],targets=mapped.get(s['id'],[]),method='sentence-order',review=True) for s in en]
+def align(en,ko,paragraph_links,manual=None,size=(600,800)):
+    from local_alignment import align as local_align
+    return local_align(en,ko,size,manual)

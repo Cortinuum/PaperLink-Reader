@@ -137,13 +137,15 @@ def page_data(pid, page):
     for link in data['links']:
         if link['source'] in edits:
             link.update(targets=edits[link['source']], method='manual', review=False)
-    data['sentence_links']=sentences.align(data['sentences_en'],data['sentences_ko'],data['links'])
     with database() as db:
         changes={r['source']:json.loads(r['targets']) for r in db.execute(
             'SELECT source,targets FROM sentence_links WHERE paper=? AND page=?',(pid,page))}
+    baseline=sentences.align(data['sentences_en'],data['sentences_ko'],data['links'],size=data['size'])
+    data['sentence_links']=sentences.align(data['sentences_en'],data['sentences_ko'],data['links'],manual=changes,size=data['size']) if changes else baseline
+    automatic={link['source']:link['targets'] for link in baseline}
     for link in data['sentence_links']:
-        link['automatic_targets']=link['targets'][:]
-        if link['source'] in changes:link.update(targets=changes[link['source']],method='manual',review=False)
+        link['automatic_targets']=automatic[link['source']][:]
+    data['alignment_summary']=dict(review=sum(l['status'] in ('needs-review','unlinked') for l in data['sentence_links']),manual=sum(l['method']=='manual' for l in data['sentence_links']))
     return data
 
 def write_sentence_links(pid,page,updates):
@@ -153,7 +155,7 @@ def write_sentence_links(pid,page,updates):
         raise ValueError('수정할 문장 연결을 확인하세요.')
     seen=set()
     for item in updates:
-        if not isinstance(item,dict) or item.get('source') not in sources or item['source'] in seen:
+        if not isinstance(item,dict) or not isinstance(item.get('source'),str) or item.get('source') not in sources or item['source'] in seen:
             raise ValueError('원문 문장을 확인하세요.')
         seen.add(item['source'])
         chosen=item.get('targets')
@@ -233,6 +235,8 @@ def sentence_context(pid,page,side,anchor,data):
         selected_language=side,selected_sentence=selected['text'],unit='sentence',
         source_sha256=CATALOG[pid]['source_hash'],translation_sha256=CATALOG[pid]['translation_hash'],
         alignment='자동 문장 후보 · 의미 일치 미검증' if uncertain else '사용자 수정 문장 연결',
+        connection_warnings=list(dict.fromkeys(reason for link in related for reason in link.get('review_reasons',[]))),
+        connection_status='manual' if not uncertain else 'unlinked' if not en or not ko else 'needs-review' if any(l.get('status')=='needs-review' for l in related) else 'candidate',
         missing_match=not en or not ko,**context)
 
 INSTRUCTIONS = '''당신은 다양한 분야의 문서를 원문과 번역으로 함께 읽는 한국어 도우미입니다.
@@ -345,7 +349,7 @@ class Handler(BaseHTTPRequestHandler):
                          for table in ('links','sentence_links','notes','chats')}
                 out['paper']=CATALOG[pid]
                 return self.send(out)
-            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.2',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
+            if u.path=='/api/health': return self.send(dict(ok=True,version='0.8.3',instance=os.environ.get('PAPERLINK_INSTANCE_ID','')))
             return self.send({'error':'찾을 수 없습니다.'},404)
         except (KeyError,ValueError,RuntimeError,OSError) as exc: self.send({'error':str(exc)},400)
 
